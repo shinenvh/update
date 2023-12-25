@@ -1,0 +1,49 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Check Update</title>
+    <!-- Chèn script với thuộc tính defer -->
+    <script defer>
+        // Code của bạn ở đây
+        function getParameterByName(name, url) {
+            if (!url) url = window.location.href;
+            name = name.replace(/[\[\]]/g, "\\$&");
+            var regex = new RegExp("[?&]" + name + "(=([^&#]*)|&|#|$)"),
+                results = regex.exec(url);
+            if (!results) return null;
+            if (!results[2]) return '';
+            return decodeURIComponent(results[2].replace(/\+/g, " "));
+        }
+
+        var id = getParameterByName('id');
+
+        // Kiểm tra cập nhật (chỉ hiển thị phiên bản)
+        // Lấy dữ liệu từ Google Sheets dưới dạng CSV
+        var csvUrl = 'https://docs.google.com/spreadsheets/d/e/2PACX-1vQCufCqwGV6dPow_mDoN06iNfZ9uvEFElCa-kSUKMDKoGcHVi7rTPEw8GETRaAFsbHYWILBUoT-T396/pub?gid=0&single=true&output=csv';
+
+        // Gọi API để lấy dữ liệu CSV
+        fetch(csvUrl)
+            .then(response => response.text())
+            .then(data => {
+                // Chuyển đổi dữ liệu CSV thành mảng
+                var rows = data.split('\n').map(row => row.split(','));
+
+                // Tìm giá trị trong mảng dựa trên id
+                var row = rows.find(row => row[0] === id);
+
+                // Hiển thị phiên bản nếu không có tham số 'update'
+                if (row) {
+                    document.write('<p>Phiên bản: ' + row[1] + '</p>');
+                } else {
+                    document.write('<p>Không tìm thấy phiên bản với ID: ' + id + '</p>');
+                }
+            })
+            .catch(error => console.error('Error:', error));
+    </script>
+</head>
+<body>
+    <!-- Nội dung trang web -->
+</body>
+</html>
